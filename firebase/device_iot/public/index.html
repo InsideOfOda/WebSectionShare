@@ -6,6 +6,10 @@
     <script src="/__/firebase/7.14.6/firebase-storage.js"></script>
     <script src="/__/firebase/init.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vue-qrcode-reader@2.0.3/dist/vue-qrcode-reader.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue-qrcode-reader@2.0.3/dist/vue-qrcode-reader.browser.js"></script>
+
+
     <!-- <script src="https://www.gstatic.com/charts/loader.js"></script> 
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -16,7 +20,14 @@
 
   <body> 
     <div id="app">
-      <scaner></scaner>
+      <button v-on:click="state = 'scaner'">scaner</button>
+      <button v-on:click="state = 'qr-reader'">QR Reader</button>
+      <div v-if="state === 'scaner'">
+        <scaner></scaner>
+      </div>
+      <div v-else>
+	<qr-reader></qr-reader>
+      </div>
     </div>
 
     <script src=app.js type="module"></script>
