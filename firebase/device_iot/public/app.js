@@ -1,4 +1,4 @@
-import scaner from './script/scaner.js'
+import scaner from './scripts/scaner.js'
 
 new Vue({
 	el: '#app',
