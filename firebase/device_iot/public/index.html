@@ -20,8 +20,8 @@
 
   <body> 
     <div id="app">
-      <button v-on:click="state = 'scaner'">scaner</button>
       <button v-on:click="state = 'qr-reader'">QR Reader</button>
+      <button v-on:click="state = 'scaner'">scaner</button>
       <div v-if="state === 'scaner'">
         <scaner></scaner>
       </div>

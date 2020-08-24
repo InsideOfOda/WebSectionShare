@@ -4,7 +4,7 @@ import qr_reader from './scripts/qr.js'
 new Vue({
 	el: '#app',
 	data:{
-		state: 'scaner'
+		state: 'qr_reader'
 	},
 	components:{
 		'scaner':scaner,
