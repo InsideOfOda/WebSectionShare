@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="/__/firebase/7.14.6/firebase-app.js"></script>
+    <script src="/__/firebase/7.14.6/firebase-firestore.js"></script>
+    <script src="/__/firebase/7.14.6/firebase-storage.js"></script>
+    <script src="/__/firebase/init.js"></script>
+
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  </head>
+
+  <body> 
+    <div id="app">
+    
+    <nav class="nav-extended blue">
+      <div class="nav-wrapper">
+        <a class="brand-logo">GameReporter</a>
+        <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+        <ul class="right hide-on-med-and-down">
+	  <li><a class="waves-effect waves-teal btn-flat" v-on:click="state = 'analyzer'">Analyzer</a></li>
+	  <li><a class="waves-effect waves-teal btn-flat" v-on:click="state = 'rule'">Rules</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <ul class="sidenav" id="mobile-demo">
+      <li><a class="waves-effect waves-teal btn-flat" v-on:click="state = 'analyzer'">Analyzer</a></li>
+      <li><a class="waves-effect waves-teal btn-flat" v-on:click="state = 'rule'">Rules</a></li>
+      <div class="divider"></div>
+    </ul>
+
+
+    <div v-if="state ==='analyzer'">
+      <analyzer></analyzer>
+    </div>
+    
+    <div v-if="state ==='rule'">
+      <guide v-bind:language="language"></guide>
+    </div>
+
+    </div>
+
+    <script src=app.js type="module"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('.sidenav');
+        var instances = M.Sidenav.init(elems);
+      });
+      document.addEventListener('DOMContentLoaded', function() {
+	    var elems = document.querySelectorAll('select');
+	        var instances = M.FormSelect.init(elems);
+      });
+    </script>
+
+
+  </body>
+</html>
