@@ -13,7 +13,10 @@ export default {
 		var event = "";
 
 		var event_ref = firebase.firestore().collection("survey_data").doc(self.survey_name).collection("opinion");
-		event_ref.add({opinion: self.opinion_text})
+		event_ref.add({
+			opinion: self.opinion_text,
+			timestamp: firebase.firestore.Timestamp.fromDate(new Date())
+		})
 		.catch((error) => {
 			console.log(error);
 		});
