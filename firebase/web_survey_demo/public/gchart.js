@@ -58,7 +58,7 @@ export default {
 			querySnapshot.forEach(function(doc){
 				var data=doc.data();
 				var date = data.timestamp.toDate();
-				data.timestamp = date.toLocaleDateString('en-US');
+				data.timestamp = date.getHours() + ":"  + date.getMinutes();
 				self.opinion.push(data);
 			});
 		});
@@ -116,7 +116,9 @@ export default {
 		      <div class="col s8">
 	                <div id="piechart"></div>
 		      </div>
-		      <div class="col s4">YES:{{ sum_yes }} <br> NO:{{ sum_no }}</div>
+		      <div class="col s4">
+		        <div class="col s12 z-depth-1">YES : {{ sum_yes }}<br>NO : {{ sum_no }}</div> 
+		      </div>
 	            </div> 
 		    <div class="col s6">
 	              <div id="barchart"></div>
@@ -125,7 +127,7 @@ export default {
 	              <table>
 	                <thead>
 	                  <tr>
-		            <th>日付</th>
+		            <th>時刻</th>
 		            <th>内容</th>
 		          </tr>
                         </thead>
