@@ -3,6 +3,7 @@ export default {
 	 return{
 		 survey_name:'',
 		 yes_or_no:true,
+		 level:3,
 		 opinion_text:''
 	 }
   },
@@ -25,6 +26,19 @@ export default {
 		var event_ref = firebase.firestore().collection("survey_data").doc(self.survey_name).collection("yes_or_no");
 		event_ref.add({
 				answer: bool_data,
+				timestamp: firebase.firestore.Timestamp.fromDate(new Date())
+			})
+		.catch((error) => {
+			console.log(error);
+		});
+
+	},
+	push_level(){
+		var self = this;
+
+		var event_ref = firebase.firestore().collection("survey_data").doc(self.survey_name).collection("level");
+		event_ref.add({
+				answer: self.level,
 				timestamp: firebase.firestore.Timestamp.fromDate(new Date())
 			})
 		.catch((error) => {
@@ -57,6 +71,14 @@ export default {
 	              <div class="col s12 center-align">
 		        NO
 	              </div>
+		    </div>
+		    <div class="row">
+		      <form action="#" class="col s9">
+		        <p class="range-field">
+		          <input type="range" id="test5" v-model="level"  min="1" max="5" />
+		        </p>
+	              </form>
+	              <div class="col s3  btn waves-effect waves-light blue" v-on:click="push_level">決定:{{ level }}</div>
 		    </div>
 		    <div class="input-field col s12">
 		      <i class="material-icons prefix">mode_edit</i>
