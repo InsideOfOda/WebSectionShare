@@ -6,179 +6,141 @@ google.charts.load('current', {'packages':['corechart']});
 export default {
 	data: function(){
 		return{
-			refbox_data:[],
-			game_event_data:[],
-			ball_position_data:[],
-			refbox_count: {
-				HALT: 0,
-				STOP: 0,
-				NORMAL_START: 0,
-				FORCE_START: 0,
-				PREPARE_KICKOFF_YELLOW: 0,
-				PREPARE_KICKOFF_BLUE: 0,
-				PREPARE_PENALTY_YELLOW: 0,
-				PREPARE_PENALTY_BLUE: 0,
-				DIRECT_FREE_YELLOW: 0,
-				DIRECT_FREE_BLUE: 0,
-				INDIRECT_FREE_YELLOW: 0,
-				INDIRECT_FREE_BLUE: 0,
-				TIMEOUT_YELLOW: 0,
-				TIMEOUT_BLUE: 0,
-				GOAL_YELLOW: 0,
-				GOAL_BLUE: 0,
-				BALL_PLACEMENT_YELLOW: 0,
-				BALL_PLACEMENT_BLUE: 0,
-			},
-			refbox_timestamp:[],
-			long_term_stop:[]
+			survey_name:'',
+			yes_or_no:[],
+			sum_yes:0,
+			sum_no:0,
+			level:[],
+			sum_level:[0,0,0,0,0],
+			opinion:[]
 		}
 	},
+  	mounted: function(){
+		var self = this;
+
+		firebase.firestore().collection("summary").doc("current_survey")
+		.onSnapshot((doc) => {
+			self.survey_name = doc.data().name;
+		});
+
+		var survey_ref = firebase.firestore().collection("survey_data").doc("default");
+
+		survey_ref.collection("yes_or_no")
+		.onSnapshot((querySnapshot) => {
+			self.yes_or_no.length=0;
+			self.sum_yes=0;
+			self.sum_no=0;
+			querySnapshot.forEach((doc) => {
+				self.yes_or_no.push(doc.data());
+				if(doc.data().answer){
+					self.sum_yes++;
+				}else{
+					self.sum_no++;
+				}
+			});
+			self.draw_pi_chart();
+		});
+
+		survey_ref.collection("level")
+		.onSnapshot((querySnapshot) => {
+			self.level.length=0;
+			self.sum_level=[0,0,0,0,0];
+			querySnapshot.forEach((doc) => {
+				self.level.push(doc.data());
+				self.sum_level[doc.data().answer - 1]++
+			});
+			self.draw_bar_chart();
+		});
+
+		survey_ref.collection("opinion")
+		.orderBy("timestamp" , "desc").limit(5).onSnapshot((querySnapshot) => {
+			self.opinion.length=0;
+			querySnapshot.forEach(function(doc){
+				var data=doc.data();
+				var date = data.timestamp.toDate();
+				data.timestamp = date.toLocaleDateString('en-US');
+				self.opinion.push(data);
+			});
+		});
+
+  	},
 	methods:{
-		draw_bar_chart(){
+		draw_pi_chart(){
 
 			var self=this;
 
-			var data = new google.visualization.DataTable();
-        		data.addColumn('string', 'Events');
-        		data.addColumn('number', 'counts');
-			data.addColumn({type:'string', role:'style'});
+			var data = new google.visualization.arrayToDataTable([
+				['Answer', 'Total'],
+				['Yes', self.sum_yes],
+				['No', self.sum_no]
+			]);
 			
-			//initialized
-			for(var key in self.refbox_count){
-				self.refbox_count[key]=0
-			}
-			
-			//calculate
-			for(var key in self.refbox_data){
-				const command_name = self.refbox_data[key].command_name;
-				self.refbox_count[command_name] += 1;
-			}
-
-			//trasforme to google.visualization.DataTable
-        		for(var key in self.refbox_count){
-				if(key.search(/BLUE/) !== -1)
-					data.addRow([key , self.refbox_count[key],'blue' ]);
-				else if(key.search(/YELLOW/) !== -1)
-					data.addRow([key , self.refbox_count[key],'yellow' ]);
-				else	
-					data.addRow([key , self.refbox_count[key],'gray' ]);
-			}
-
-			var view = new google.visualization.DataView(data);
-			      view.setColumns([0, 1,
-				            { calc: "stringify",
-					      sourceColumn: 1,
-					      type: "string",
-					      role: "annotation" },
-				              2]);
-
 			//setting
         		var options = {
-				title: 'Counts of events',
-				vAxis: {
-					title: 'Events'
-				},
-				hAxis:  {
-					title: 'Number of counts'
-				},
-				bar: {groupWidth: '80%'},
-				height: '600',
-				width: '800'
-				
+				pieHole: 0.3,
+				legend: 'none',
+				pieSliceText: 'label'
 			};
 
 			//get element and draw
-        		var chart = new google.visualization.BarChart(document.getElementById('gchart'));
-        		chart.draw(view, options);
+        		var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+        		chart.draw(data, options);
       
 		},
-		draw_timeline(){
+		draw_bar_chart(){
 			var self=this;
 
-			var data = new google.visualization.DataTable();
-      
-			data.addColumn({ type: 'string', id: 'stage' });
-			data.addColumn({ type: 'string', id: 'Comand name' });
-        		data.addColumn({ type: 'number', id: 'Start' });
-        		data.addColumn({ type: 'number', id: 'End' });
+			var data = new google.visualization.arrayToDataTable([
+				['Answer', 'Total'],
+				['1', self.sum_level[0] ],
+				['2', self.sum_level[1] ],
+				['3', self.sum_level[2] ],
+				['4', self.sum_level[3] ],
+				['5', self.sum_level[4] ],
+			]);
 			
-			for(var i = 2; i < self.refbox_data.length; i++){
-				var stage=self.refbox_data[i].stage;
-				var command_name=self.refbox_data[i].command_name;
-				var start_time=self.refbox_data[i].timestamp * 0.001 ;
-				var end_time;
-				if(i != (self.refbox_data.length - 1) ){
-					end_time=self.refbox_data[i+1].timestamp * 0.001 ;
-					if( ((end_time - start_time) >= 30000) && (command_name === 'STOP' || command_name === 'HALT') ){
-						self.long_term_stop.push({
-							current_name: command_name,
-							pre_name:	self.refbox_data[i-1].command_name,
-							prepre_name: self.refbox_data[i-2].command_name,
-							start_time: start_time
-						});
-						data.addRow([ command_name, stage, start_time, end_time ])
-					}
-				} else{
-					end_time= start_time + 1;
-				}
-				//data.addRow([ command_name, stage, start_time, end_time ])
-			}
-			for(var i=0; i < self.game_event_data.length; i++){
-				var game_event=self.game_event_data[i].event_name;
-				var timestamp=self.game_event_data[i].timestamp *0.001;
-				data.addRow([ 'GAME_EVENT', game_event, timestamp, timestamp + 50000 ]);
-			}
-			var options = {
-        			//timeline: { showRowLabels: false },
-        			//avoidOverlappingGridLines: false
-				width : '4000',
-				height: '800'
-				//timeline: { showBarLabels: false }
-      			};
-			var chart = new google.visualization.Timeline(document.getElementById('gchart'));
-			chart.draw(data,options);
-		},
-		draw_bubble(){
-			var self=this;
-
-			var data = new google.visualization.DataTable();
-      
-			data.addColumn({ type: 'string', id: 'No.' });
-			data.addColumn({ type: 'number', id: 'X' });
-        		data.addColumn({ type: 'number', id: 'Y' });
-        		data.addColumn({ type: 'string', id: 'Team' });
-			
-			/*
-			var data = new google.visualization.arrayToDataTable(
-				['No.', 'X', 'Y', 'Team']
-			);
-			*/
-
-			for(var i=0; i < self.ball_position_data.length; i++){
-				//var no=String(self.ball_position_data[i].robot_number);
-				var no=self.ball_position_data[i].robot_number;
-				var x=Number(self.ball_position_data[i].position_x);
-				var y=Number(self.ball_position_data[i].position_y);
-				var team=self.ball_position_data[i].ball_holding_team;
-				data.addRow([no,x,y,team]);
-			}
-
-			var options = {
-				title:'ball_position',
-				hAxis: {title: 'x', maxValue: 6000, minValue:-6000},
-				vAxis: {title: 'y', maxValue: 6000, minValue:-6000},
-				buble: {textStyle: {fontSize: 11}},
-				sizeAxis: {maxSize: 10},
-				height: '800',
-				width: '800'
+			//setting
+        		var options = {
+				legend: 'none'
 			};
 
-			var chart = new google.visualization.BubbleChart(document.getElementById('gchart'));
-			chart.draw(data,options);
-
-			
-		}
-	}
+			//get element and draw
+        		var chart = new google.visualization.BarChart(document.getElementById('barchart'));
+        		chart.draw(data, options);
+		},
+	},
+	template:`
+		<div> 
+                  <div class="row">
+		    <div class="col s12 valign-wrapper">
+		      <div class="col s8">
+	                <div id="piechart"></div>
+		      </div>
+		      <div class="col s4">YES:{{ sum_yes }} <br> NO:{{ sum_no }}</div>
+	            </div> 
+		    <div class="col s6">
+	              <div id="barchart"></div>
+	            </div> 
+	  	    <div class="col s6 z-depth-1">
+	              <table>
+	                <thead>
+	                  <tr>
+		            <th>日付</th>
+		            <th>内容</th>
+		          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="log in opinion"> 
+                           <td> {{ log.timestamp }} </td>
+                           <td> {{ log.opinion }} </td>
+                          </tr>
+                        </tbody>
+                      </table>
+	            </div>
+                  </div>
+                </div>
+		`
 }
+
 
 

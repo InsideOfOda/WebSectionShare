@@ -1,14 +1,14 @@
-import analyzer from './analyzer.js'
+import audience from './audience.js'
 import guide from './guide.js'
 
 new Vue({
 	el: '#app',
 	data:{
-		state: 'analyzer',
+		state: 'audience',
 		language: 'eng'
 	},
 	components:{
-		analyzer,
+		audience,
 		guide
 	}
 })
