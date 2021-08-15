@@ -1,5 +1,5 @@
 google.charts.load('current', {'packages':['bar']});
-google.charts.load('current', {'packages':['timeline']});
+google.charts.load('current', {'packages':['line']});
 google.charts.load('current', {'packages':['corechart']});
 
 
@@ -8,6 +8,7 @@ export default {
 		return{
 			survey_name:'',
 			yes_or_no:[],
+			y_n_array:[],
 			sum_yes:0,
 			sum_no:0,
 			level:[],
@@ -26,8 +27,9 @@ export default {
 		var survey_ref = firebase.firestore().collection("survey_data").doc("default");
 
 		survey_ref.collection("yes_or_no")
-		.onSnapshot((querySnapshot) => {
+		.orderBy("timestamp" , "asc").onSnapshot((querySnapshot) => {
 			self.yes_or_no.length=0;
+			self.y_n_array.length=0;
 			self.sum_yes=0;
 			self.sum_no=0;
 			querySnapshot.forEach((doc) => {
@@ -37,8 +39,10 @@ export default {
 				}else{
 					self.sum_no++;
 				}
+				self.y_n_array.push([doc.data().timestamp.toDate(), self.sum_yes, self.sum_no]);
 			});
 			self.draw_pi_chart();
+			self.draw_line_chart();
 		});
 
 		survey_ref.collection("level")
@@ -108,6 +112,26 @@ export default {
         		var chart = new google.visualization.BarChart(document.getElementById('barchart'));
         		chart.draw(data, options);
 		},
+		draw_line_chart(){
+			var self=this;
+
+			var data = new google.visualization.DataTable();
+			data.addColumn('date', 'Time');
+			data.addColumn('number', 'YES');
+			data.addColumn('number', 'NO');
+
+			data.addRows(self.y_n_array);
+
+        		var options = {
+				legend:{
+					position: 'none'
+				}
+			};
+
+        		var chart = new google.charts.Line(document.getElementById('linechart'));
+        		chart.draw(data, google.charts.Line.convertOptions(options));
+			
+		}
 	},
 	template:`
 		<div> 
@@ -120,6 +144,10 @@ export default {
 		        <div class="col s12 z-depth-1">YES : {{ sum_yes }}<br>NO : {{ sum_no }}</div> 
 		      </div>
 	            </div> 
+		    <div class="col s6">
+	              <div id="linechart"></div>
+	            </div> 
+		    <div>{{ y_n_array }} </div>
 		    <div class="col s6">
 	              <div id="barchart"></div>
 	            </div> 
