@@ -20,55 +20,60 @@ export default {
 		var self = this;
 
 		firebase.firestore().collection("summary").doc("current_survey")
-		.onSnapshot((doc) => {
-			self.survey_name = doc.data().name;
-		});
+		.onSnapshot(async(doc) => {
+			self.survey_name = await doc.data().name;
+			self.set_snapshot();
+		})
 
-		var survey_ref = firebase.firestore().collection("survey_data").doc("default");
-
-		survey_ref.collection("yes_or_no")
-		.orderBy("timestamp" , "asc").onSnapshot((querySnapshot) => {
-			self.yes_or_no.length=0;
-			self.y_n_array.length=0;
-			self.sum_yes=0;
-			self.sum_no=0;
-			querySnapshot.forEach((doc) => {
-				self.yes_or_no.push(doc.data());
-				if(doc.data().answer){
-					self.sum_yes++;
-				}else{
-					self.sum_no++;
-				}
-				self.y_n_array.push([doc.data().timestamp.toDate(), self.sum_yes, self.sum_no]);
-			});
-			self.draw_pi_chart();
-			self.draw_line_chart();
-		});
-
-		survey_ref.collection("level")
-		.onSnapshot((querySnapshot) => {
-			self.level.length=0;
-			self.sum_level=[0,0,0,0,0];
-			querySnapshot.forEach((doc) => {
-				self.level.push(doc.data());
-				self.sum_level[doc.data().answer - 1]++
-			});
-			self.draw_bar_chart();
-		});
-
-		survey_ref.collection("opinion")
-		.orderBy("timestamp" , "desc").limit(5).onSnapshot((querySnapshot) => {
-			self.opinion.length=0;
-			querySnapshot.forEach(function(doc){
-				var data=doc.data();
-				var date = data.timestamp.toDate();
-				data.timestamp = date.getHours() + ":"  + date.getMinutes();
-				self.opinion.push(data);
-			});
-		});
 
   	},
 	methods:{
+		set_snapshot(){
+			var self=this;
+			var survey_ref = firebase.firestore().collection("survey_data").doc(self.survey_name);
+
+			survey_ref.collection("yes_or_no")
+			.orderBy("timestamp" , "asc").onSnapshot((querySnapshot) => {
+				self.yes_or_no.length=0;
+				self.y_n_array.length=0;
+				self.sum_yes=0;
+				self.sum_no=0;
+				querySnapshot.forEach((doc) => {
+					self.yes_or_no.push(doc.data());
+					if(doc.data().answer){
+						self.sum_yes++;
+					}else{
+						self.sum_no++;
+					}
+					self.y_n_array.push([doc.data().timestamp.toDate(), self.sum_yes, self.sum_no]);
+				});
+				self.draw_pi_chart();
+				self.draw_line_chart();
+			});
+
+			survey_ref.collection("level")
+			.onSnapshot((querySnapshot) => {
+				self.level.length=0;
+				self.sum_level=[0,0,0,0,0];
+				querySnapshot.forEach((doc) => {
+					self.level.push(doc.data());
+					self.sum_level[doc.data().answer - 1]++
+				});
+				self.draw_bar_chart();
+			});
+
+			survey_ref.collection("opinion")
+			.orderBy("timestamp" , "desc").limit(5).onSnapshot((querySnapshot) => {
+				self.opinion.length=0;
+				querySnapshot.forEach(function(doc){
+					var data=doc.data();
+					var date = data.timestamp.toDate();
+					data.timestamp = date.getHours() + ":"  + date.getMinutes();
+					self.opinion.push(data);
+				});
+			});
+
+		},
 		draw_pi_chart(){
 
 			var self=this;
@@ -147,7 +152,6 @@ export default {
 		    <div class="col s6">
 	              <div id="linechart"></div>
 	            </div> 
-		    <div>{{ y_n_array }} </div>
 		    <div class="col s6">
 	              <div id="barchart"></div>
 	            </div> 
