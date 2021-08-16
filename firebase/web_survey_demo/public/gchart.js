@@ -116,12 +116,12 @@ export default {
 			
 			//setting
         		var options = {
-				legend: 'none'
+				legend: { position: 'none' },
 			};
 
 			//get element and draw
-        		var chart = new google.visualization.BarChart(document.getElementById('barchart'));
-        		chart.draw(data, options);
+        		var chart = new google.charts.Bar(document.getElementById('barchart'));
+        		chart.draw(data, google.charts.Bar.convertOptions(options));
 		},
 		draw_line_chart(){
 			var self=this;
