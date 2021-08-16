@@ -130,7 +130,7 @@ export default {
         		var options = {
 				legend:{
 					position: 'none'
-				}
+				},
 			};
 
         		var chart = new google.charts.Line(document.getElementById('linechart'));
@@ -141,21 +141,28 @@ export default {
 	template:`
 		<div> 
                   <div class="row">
-		    <div class="col s12 valign-wrapper">
-		      <div class="col s8">
-	                <div id="piechart"></div>
+		    <div class="card">
+		      <div class="row valign-wrapper">
+		        <div class="col s6">
+	                  <div id="piechart"></div>
+		        </div>
+		        <div class="col s6">
+	                  <div id="linechart"></div>
+	                </div> 
+	              </div> 
+		      <div class="row">
+		        <div class="col s4 offset-s1 center-align">
+			  <div class="card">YES : {{ sum_yes }}</div> 
+			</div>
+		        <div class="col s4 offset-s2 center-align">
+			  <div class="card">NO : {{ sum_no }}</div> 
+			</div>
 		      </div>
-		      <div class="col s4">
-		        <div class="col s12 z-depth-1">YES : {{ sum_yes }}<br>NO : {{ sum_no }}</div> 
-		      </div>
-	            </div> 
-		    <div class="col s6">
-	              <div id="linechart"></div>
-	            </div> 
+		    </div>
 		    <div class="col s6">
 	              <div id="barchart"></div>
 	            </div> 
-	  	    <div class="col s6 z-depth-1">
+	  	    <div class="col s12 z-depth-1">
 	              <table>
 	                <thead>
 	                  <tr>

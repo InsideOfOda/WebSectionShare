@@ -61,9 +61,11 @@ export default {
 	});
   },
   template:`
-		<div class="container"> 
+		<div> 
                   <div class="row">
-	            <div class="card col s12">{{ survey_name }}</div>
+	            <div class="col s12">
+		      <blockquote><pre>{{ survey_name }}</pre></blockquote>
+		    </div>
 		    <div class="card blue lighten-4 col s5 btn waves-effect waves-light" v-on:click="push_yes_or_no(true)">
 	              <div class="col s12 center-align">
 		        YES
@@ -83,13 +85,15 @@ export default {
 	              </form>
 	              <div class="col s3  btn waves-effect waves-light blue" v-on:click="push_level">決定:{{ level }}</div>
 		    </div>
-		    <div class="input-field col s12">
-		      <i class="material-icons prefix">mode_edit</i>
-		      <textarea id="textarea1" class="materialize-textarea" v-model="opinion_text" ></textarea>
+		    <div class="row valign-wrapper">
+		      <div class="input-field col s11">
+		        <i class="material-icons prefix">mode_edit</i>
+		        <textarea id="textarea1" class="materialize-textarea" v-model="opinion_text" ></textarea>
+		      </div>
+	              <div class="btn-floating waves-effect waves-light blue" v-on:click="save_opinion">
+		        <i class="material-icons prefix">send</i>
+		      </div> 
 		    </div>
-	            <div class="row">
-	              <div class="col s3 offset-s9  btn waves-effect waves-light blue" v-on:click="save_opinion">保存</div>
-	            </div>
                   </div>
                 </div>
 		`	
