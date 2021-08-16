@@ -3,8 +3,7 @@ import gchart from "./gchart.js"
 export default {
   data: function() {
 	 return{
-		rule_texts: '',
-		survey_name:'',
+		survey_data:[],
 		yes_or_no:true,
 		level:true,
 		opinion:true
@@ -20,10 +19,10 @@ export default {
 
 		var event_ref = firebase.firestore().collection("summary").doc("current_survey");
 		event_ref.set({
-			name: self.survey_name,
-			yes_or_no: self.yes_or_no,
-			level: self.level,
-			opinion: self.opinion,
+			name: self.survey_data.name,
+			yes_or_no: self.survey_data.yes_or_no,
+			level: self.survey_data.level,
+			opinion: self.survey_data.opinion,
 			timestamp: firebase.firestore.Timestamp.fromDate(new Date())
 		});
 
@@ -32,8 +31,8 @@ export default {
   mounted: function() {
 	var self = this;
 	firebase.firestore().collection("summary").doc("current_survey")
-	.get().then((doc) => {
-		self.survey_name = doc.data().name;
+	.get().then( async(doc) => {
+		self.survey_data = await doc.data();
 	})
   },
 	template:`
@@ -41,7 +40,7 @@ export default {
                   <div class="row valign-wrapper">
 		    <div class="input-field col s11">
 		      <i class="material-icons prefix">mode_edit</i>
-		      <textarea id="textarea1" class="materialize-textarea" v-model="survey_name" ></textarea>
+		      <textarea id="textarea1" class="materialize-textarea" v-model="survey_data.name" ></textarea>
 		    </div>
 	            <div class="btn-floating waves-effect waves-light blue" v-on:click="pub_survey">
 		      <i class="material-icons prefix">send</i>
@@ -50,19 +49,19 @@ export default {
 		  <div class="row">
 		    <div class="col s4">
 		      <label>
-		        <input type="checkbox" v-model="yes_or_no"  />
+		        <input type="checkbox" v-model="survey_data.yes_or_no"  />
 		        <span>YES/NO</span>
 		      </label>
 	    	    </div>
 		    <div class="col s4">
 		      <label>
-		        <input type="checkbox" v-model="level" />
+		        <input type="checkbox" v-model="survey_data.level" />
 		        <span>5段階</span>
 		      </label>
 	    	    </div>
 		    <div class="col s4">
 		      <label>
-		        <input type="checkbox" v-model="opinion"  />
+		        <input type="checkbox" v-model="survey_data.opinion"  />
 		        <span>自由記述</span>
 		      </label>
 	    	    </div>
