@@ -7,7 +7,7 @@ google.charts.load('current', {'packages':['corechart']});
 export default {
 	data: function(){
 		return{
-			survey_name:'',
+			survey_data:[],
 			yes_or_no:[],
 			y_n_array:[],
 			sum_yes:0,
@@ -22,7 +22,7 @@ export default {
 
 		firebase.firestore().collection("summary").doc("current_survey")
 		.onSnapshot(async(doc) => {
-			self.survey_name = await doc.data().name;
+			self.survey_data = await doc.data();
 			self.set_snapshot();
 		})
 
@@ -31,7 +31,7 @@ export default {
 	methods:{
 		set_snapshot(){
 			var self=this;
-			var survey_ref = firebase.firestore().collection("survey_data").doc(self.survey_name);
+			var survey_ref = firebase.firestore().collection("survey_data").doc(self.survey_data.name);
 
 			survey_ref.collection("yes_or_no")
 			.orderBy("timestamp" , "asc").onSnapshot((querySnapshot) => {
@@ -161,7 +161,7 @@ export default {
 	template:`
 		<div> 
                   <div class="row">
-		    <div class="card">
+		    <div class="card" v-if="survey_data.yes_or_no">
 		      <div class="row valign-wrapper">
 		        <div class="col s6">
 	                  <div id="piechart"></div>
@@ -179,7 +179,7 @@ export default {
 			</div>
 		      </div>
 		    </div>
-		    <div class="card valign-wrapper">
+		    <div class="card valign-wrapper" v-if="survey_data.level">
 		      <div class="col s5">
 	                <div id="barchart"></div>
 	              </div> 
@@ -187,7 +187,7 @@ export default {
 	                <div id="timeline"></div>
 	              </div> 
 		    </div>
-	  	    <div class="col s12 z-depth-1">
+	  	    <div class="col s12 z-depth-1" v-if="survey_data.opinion">
 	              <table>
 	                <thead>
 	                  <tr>
