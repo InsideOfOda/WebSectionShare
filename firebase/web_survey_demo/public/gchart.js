@@ -1,5 +1,6 @@
 google.charts.load('current', {'packages':['bar']});
 google.charts.load('current', {'packages':['line']});
+google.charts.load('current', {'packages':['timeline']});
 google.charts.load('current', {'packages':['corechart']});
 
 
@@ -52,13 +53,18 @@ export default {
 			});
 
 			survey_ref.collection("level")
-			.onSnapshot((querySnapshot) => {
+			.orderBy("timestamp" , "asc").onSnapshot((querySnapshot) => {
 				self.level.length=0;
 				self.sum_level=[0,0,0,0,0];
 				querySnapshot.forEach((doc) => {
-					self.level.push(doc.data());
+					if(self.level.length == 0){
+						self.level.push([doc.data().answer, doc.data().timestamp.toDate(), doc.data().timestamp.toDate()]);
+					} else {
+						self.level.push([doc.data().answer, self.level[self.level.length-1][2], doc.data().timestamp.toDate() ]);
+					}
 					self.sum_level[doc.data().answer - 1]++
 				});
+				self.draw_timeline();
 				self.draw_bar_chart();
 			});
 
@@ -136,6 +142,20 @@ export default {
         		var chart = new google.charts.Line(document.getElementById('linechart'));
         		chart.draw(data, google.charts.Line.convertOptions(options));
 			
+		},
+		draw_timeline(){
+			var self=this;
+			var dataTable = new google.visualization.DataTable();
+
+			dataTable.addColumn({ type: 'string', id: 'Answer' });
+			dataTable.addColumn({ type: 'date', id: 'Start' });
+			dataTable.addColumn({ type: 'date', id: 'End' });
+
+			dataTable.addRows(self.level);
+
+			var container = document.getElementById('timeline');
+			var chart = new google.visualization.Timeline(container);
+			chart.draw(dataTable);
 		}
 	},
 	template:`
@@ -159,9 +179,14 @@ export default {
 			</div>
 		      </div>
 		    </div>
-		    <div class="col s6">
-	              <div id="barchart"></div>
-	            </div> 
+		    <div class="card valign-wrapper">
+		      <div class="col s5">
+	                <div id="barchart"></div>
+	              </div> 
+		      <div class="col s7">
+	                <div id="timeline"></div>
+	              </div> 
+		    </div>
 	  	    <div class="col s12 z-depth-1">
 	              <table>
 	                <thead>

@@ -3,7 +3,7 @@ export default {
 	 return{
 		 survey_name:'',
 		 yes_or_no:true,
-		 level:3,
+		 level:'3',
 		 opinion_text:''
 	 }
   },
