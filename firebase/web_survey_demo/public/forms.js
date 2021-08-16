@@ -84,7 +84,7 @@ export default {
 	              </form>
 	              <div class="col s3  btn waves-effect waves-light blue" v-on:click="push_level">決定:{{ level }}</div>
 		    </div>
-		    <div class="row valign-wrapper" v-if="survey_data.opinion">
+		    <div class="col s12 valign-wrapper" v-if="survey_data.opinion">
 		      <div class="input-field col s11">
 		        <i class="material-icons prefix">mode_edit</i>
 		        <textarea id="textarea1" class="materialize-textarea" v-model="opinion_text" ></textarea>
