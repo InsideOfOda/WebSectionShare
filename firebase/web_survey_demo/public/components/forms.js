@@ -90,9 +90,11 @@ export default {
 		      <div class="input-field col s5">
 		        <i class="material-icons prefix">mode_edit</i>
 		        <textarea id="textarea1" class="materialize-textarea" v-model="user_name" ></textarea>
+			<label for="textarea1">name</label>
 		      </div>
 		      <div class="input-field col s6">
-		        <textarea id="textarea1" class="materialize-textarea" v-model="opinion_text" ></textarea>
+		        <textarea id="textarea2" class="materialize-textarea" v-model="opinion_text" ></textarea>
+			<label for="textarea2">opinion</label>
 		      </div>
 	              <div class="btn-floating waves-effect waves-light blue" v-on:click="save_opinion">
 		        <i class="material-icons prefix">send</i>
