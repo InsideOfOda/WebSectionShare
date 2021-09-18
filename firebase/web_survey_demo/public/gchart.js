@@ -192,12 +192,14 @@ export default {
 	                <thead>
 	                  <tr>
 		            <th>時刻</th>
+		            <th>名前</th>
 		            <th>内容</th>
 		          </tr>
                         </thead>
                         <tbody>
                           <tr v-for="log in opinion"> 
                            <td> {{ log.timestamp }} </td>
+                           <td> {{ log.name }} </td>
                            <td> {{ log.opinion }} </td>
                           </tr>
                         </tbody>
