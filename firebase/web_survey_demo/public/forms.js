@@ -4,7 +4,8 @@ export default {
 		 survey_data:[],
 		 yes_or_no:true,
 		 level:'3',
-		 opinion_text:''
+		 opinion_text:'',
+		 user_name:''
 	 }
   },
   methods:{
@@ -15,6 +16,7 @@ export default {
 		var event_ref = firebase.firestore().collection("survey_data").doc(self.survey_data.name).collection("opinion");
 		event_ref.add({
 			opinion: self.opinion_text,
+			name: self.user_name,
 			timestamp: firebase.firestore.Timestamp.fromDate(new Date())
 		})
 		.catch((error) => {
@@ -64,13 +66,13 @@ export default {
 		      <blockquote><pre>{{ survey_data.name }}</pre></blockquote>
 		    </div>
 		    <div class="row" v-if="survey_data.yes_or_no">
-		      <div class="card blue lighten-4 col s5 btn waves-effect waves-light" v-on:click="push_yes_or_no(true)">
+		      <div class="card blue col s5 btn waves-effect waves-light" v-on:click="push_yes_or_no(true)">
 	                <div class="col s12 center-align">
 		          YES
 	                </div>
 		      </div>
 		      <div class="col s2"></div>
-		      <div class="card red lighten-4 col s5 btn waves-effect waves-light" v-on:click="push_yes_or_no(false)">
+		      <div class="card red col s5 btn waves-effect waves-light" v-on:click="push_yes_or_no(false)">
 	                <div class="col s12 center-align">
 		          NO
 	                </div>
@@ -85,8 +87,11 @@ export default {
 	              <div class="col s3  btn waves-effect waves-light blue" v-on:click="push_level">決定:{{ level }}</div>
 		    </div>
 		    <div class="col s12 valign-wrapper" v-if="survey_data.opinion">
-		      <div class="input-field col s11">
+		      <div class="input-field col s5">
 		        <i class="material-icons prefix">mode_edit</i>
+		        <textarea id="textarea1" class="materialize-textarea" v-model="user_name" ></textarea>
+		      </div>
+		      <div class="input-field col s6">
 		        <textarea id="textarea1" class="materialize-textarea" v-model="opinion_text" ></textarea>
 		      </div>
 	              <div class="btn-floating waves-effect waves-light blue" v-on:click="save_opinion">
