@@ -1,5 +1,5 @@
-import audience from './audience.js'
-import speaker from './speaker.js'
+import audience from '../components/audience.js'
+import speaker from '../components/speaker.js'
 
 new Vue({
 	el: '#app',
