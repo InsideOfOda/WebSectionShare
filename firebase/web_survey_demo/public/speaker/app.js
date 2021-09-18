@@ -4,7 +4,7 @@ import speaker from '../components/speaker.js'
 new Vue({
 	el: '#app',
 	data:{
-		state: 'audience',
+		state: 'speaker',
 	},
 	components:{
 		audience,
