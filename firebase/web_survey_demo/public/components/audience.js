@@ -1,10 +1,8 @@
-import gchart from "./gchart.js"
 import forms from "./forms.js"
 
 export default {
 	components:{
-		gchart,
-		forms
+		forms,
 	},
 	data: function(){
 		return{
@@ -14,10 +12,7 @@ export default {
 	},
 	template:`
 		<div class="container">
-	          <div class="row">
 		  <forms></forms>
-		  <gchart></gchart>
-	          </div>
 		</div>
 		`
 
