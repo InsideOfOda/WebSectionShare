@@ -18,25 +18,13 @@
   <body> 
     <div id="app">
     
-    <nav class="nav-extended blue">
+    <nav class="blue">
       <div class="nav-wrapper">
-        <a class="brand-logo">Survey Demo</a>
-        <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-        <ul class="right hide-on-med-and-down">
-	  <li><a class="waves-effect waves-teal btn-flat" v-on:click="state = 'audience'">Audience</a></li>
-        </ul>
+        <div class="center-align">中産連リカレントプログラム 9/28</div>
       </div>
     </nav>
 
-    <ul class="sidenav" id="mobile-demo">
-      <li><a class="waves-effect waves-teal btn-flat" v-on:click="state = 'audience'">Audience</a></li>
-      <div class="divider"></div>
-    </ul>
-
-
-    <div v-if="state ==='audience'">
-      <audience></audience>
-    </div>
+    <audience></audience>
 
     </div>
 
