@@ -14,7 +14,7 @@ export default {
 		var self = this;
 		var event = "";
 
-		var event_ref = firebase.firestore().collection("survey_data").doc(self.survey_data.name).collection("opinion");
+		var event_ref = firebase.firestore().collection("survey_data").doc(new Date().toDateString()).collection("opinion");
 		event_ref.add({
 			opinion: self.opinion_text,
 			name: self.user_name,
@@ -28,7 +28,7 @@ export default {
 	},
 	set_snapshot(){
 		var self=this;
-		var survey_ref = firebase.firestore().collection("survey_data").doc(self.survey_data.name);
+		var survey_ref = firebase.firestore().collection("survey_data").doc(new Date().toDateString());
 
 		survey_ref.collection("opinion")
 		.orderBy("timestamp" , "desc").limit(5).onSnapshot((querySnapshot) => {
