@@ -26,6 +26,18 @@ export default {
 			timestamp: firebase.firestore.Timestamp.fromDate(new Date())
 		});
 
+	},
+	reset_opinion(){
+		var self=this;
+		
+		var opinion_ref=firebase.firestore().collection("survey_data").doc(new Date().toDateString()).collection("opinion");
+
+		opinion_ref.get().then((querySnapshot) => {
+			querySnapshot.forEach((doc) => {
+				opinion_ref.doc(doc.id).delete();
+			});
+		});
+
 	}
   },
   mounted: function() {
@@ -65,6 +77,13 @@ export default {
 		        <span>自由記述</span>
 		      </label>
 	    	    </div>
+		  </div>
+		  <div class="row">
+		    <div class="card red col s5 offset-s7 btn waves-effect waves-light" v-on:click="reset_opinion">
+	              <div class="center-align">
+		        Message Reset
+	              </div>
+		    </div>
 		  </div>
 		  <gchart></gchart>
                 </div>
