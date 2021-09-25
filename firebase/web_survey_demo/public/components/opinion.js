@@ -33,12 +33,20 @@ export default {
 		survey_ref.collection("opinion")
 		.orderBy("timestamp" , "desc").limit(5).onSnapshot((querySnapshot) => {
 			self.opinion.length=0;
-			querySnapshot.forEach(function(doc){
-				var data=doc.data();
-				var date = data.timestamp.toDate();
-				data.timestamp = date.getHours() + ":"  + date.getMinutes();
-				self.opinion.push(data);
-			});
+			if(!querySnapshot.empty){
+				querySnapshot.forEach(function(doc){
+					var data=doc.data();
+					var date = data.timestamp.toDate();
+					data.timestamp = date.getHours() + ":"  + date.getMinutes();
+					self.opinion.push(data);
+				});
+			}else{
+				self.opinion.push({
+					timestamp:"",
+					name:"",
+					opinion:""
+				});
+			}
 		});
 
 	},
