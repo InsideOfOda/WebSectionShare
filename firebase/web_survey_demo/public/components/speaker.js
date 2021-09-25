@@ -30,13 +30,16 @@ export default {
 	reset_opinion(){
 		var self=this;
 		
-		var opinion_ref=firebase.firestore().collection("survey_data").doc(new Date().toDateString()).collection("opinion");
+		if(window.confirm("本日分のメッセージを全て削除します")){
+		
+			var opinion_ref=firebase.firestore().collection("survey_data").doc(new Date().toDateString()).collection("opinion");
 
-		opinion_ref.get().then((querySnapshot) => {
-			querySnapshot.forEach((doc) => {
-				opinion_ref.doc(doc.id).delete();
+			opinion_ref.get().then((querySnapshot) => {
+				querySnapshot.forEach((doc) => {
+					opinion_ref.doc(doc.id).delete();
+				});
 			});
-		});
+		}
 
 	}
   },
