@@ -14,8 +14,11 @@ export default {
 		var self = this;
 		var event = "";
 
-		var event_ref = firebase.firestore().collection("survey_data").doc(new Date().toDateString()).collection("opinion");
-		event_ref.add({
+		//var event_ref = firebase.firestore().collection("survey_data").doc(new Date().toDateString()).collection("opinion");
+		var sep28_ref = firebase.firestore().collection("survey_data").doc("Tue Sep 28 2021").collection("opinion");
+
+		//event_ref.add({
+		sep28_ref.add({
 			opinion: self.opinion_text,
 			name: self.user_name,
 			timestamp: firebase.firestore.Timestamp.fromDate(new Date())
@@ -28,10 +31,12 @@ export default {
 	},
 	set_snapshot(){
 		var self=this;
-		var survey_ref = firebase.firestore().collection("survey_data").doc(new Date().toDateString());
+		var sep28_ref = firebase.firestore().collection("survey_data").doc("Tue Sep 28 2021");
+		//var survey_ref = firebase.firestore().collection("survey_data").doc(new Date().toDateString());
 
-		survey_ref.collection("opinion")
-		.orderBy("timestamp" , "desc").limit(5).onSnapshot((querySnapshot) => {
+		//survey_ref.collection("opinion")
+		sep28_ref.collection("opinion")
+		.orderBy("timestamp" , "desc").limit(20).onSnapshot((querySnapshot) => {
 			self.opinion.length=0;
 			if(!querySnapshot.empty){
 				querySnapshot.forEach(function(doc){

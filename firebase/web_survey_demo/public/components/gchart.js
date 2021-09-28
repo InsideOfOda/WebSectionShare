@@ -69,7 +69,7 @@ export default {
 			});
 
 			firebase.firestore().collection("survey_data").doc(new Date().toDateString()).collection("opinion")
-			.orderBy("timestamp" , "desc").limit(5).onSnapshot((querySnapshot) => {
+			.orderBy("timestamp" , "desc").limit(20).onSnapshot((querySnapshot) => {
 				self.opinion.length=0;
 				if(!querySnapshot.empty){
 					querySnapshot.forEach(function(doc){
