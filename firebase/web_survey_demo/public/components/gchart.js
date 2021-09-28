@@ -68,7 +68,8 @@ export default {
 				self.draw_bar_chart();
 			});
 
-			firebase.firestore().collection("survey_data").doc(new Date().toDateString()).collection("opinion")
+			//firebase.firestore().collection("survey_data").doc(new Date().toDateString()).collection("opinion")
+			firebase.firestore().collection("survey_data").doc("Tue Sep 28 2021").collection("opinion")
 			.orderBy("timestamp" , "desc").limit(20).onSnapshot((querySnapshot) => {
 				self.opinion.length=0;
 				if(!querySnapshot.empty){
